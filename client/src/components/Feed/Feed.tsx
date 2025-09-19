@@ -1,10 +1,7 @@
-import { type RefObject,useCallback, useEffect, useMemo, useRef, useState } from 'react';
-
-import { GAP, ITEM_HEIGHT, ITEM_WIDTH } from '@/constants/gridContants';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useInfiniteScroll } from '../../hooks/useInfiniteScroll';
 import { usePokemonsFeed } from '../../hooks/usePokemonsFeed';
-import { useVirtualGrid } from '../../hooks/useVirtualGrid'; // ← добавили
 import { GEN_TAGS, type GenTag } from '../../lib/types';
 import { CardItem } from '../CardItem/CardItem';
 import { TagButton } from '../TagButton/TagButton';
@@ -33,19 +30,9 @@ export default function Feed() {
     setFilter((cur) => (cur === tag ? undefined : tag));
   }, []);
 
-  const gridRef = useRef<HTMLElement | null>(null);
-
-  const virtualGrid = useVirtualGrid(items.length, gridRef as RefObject<HTMLElement>, {
-    itemWidth: ITEM_WIDTH,
-    itemHeight: ITEM_HEIGHT,
-    gapX: GAP,
-    gapY: GAP,
-    overscanRows: 2,
-  });
-
   const infiniteScrollRef = useInfiniteScroll(
     async () => { await loadNext(); },
-    { enabled: isHasMore && !loadingRef.current && !error, rootMargin: '600px' },
+    { enabled: isHasMore && !loadingRef.current && !error, rootMargin: '400px' },
   );
 
   const empty = !loadingRef.current && items.length === 0 && !error;
@@ -65,28 +52,16 @@ export default function Feed() {
     </div>
   ), [filter, onClickTag]);
 
-  const unVirtualizedItems = items.slice(virtualGrid.startIndex, virtualGrid.endIndex);
-
   return (
     <main className={styles.feedWrap}>
       <h1>Instapoke</h1>
       {toolbar}
 
-      <div style={{ height: virtualGrid.padTop }} />
-
       <section
         className={styles.grid}
-        ref={(el) => {
-          if (el) gridRef.current = el;
-        }}
-        style={{
-          gridTemplateColumns: `repeat(${virtualGrid.columnCount}, minmax(0, 1fr))`,
-        }}
       >
-        {unVirtualizedItems.map((it) => <CardItem key={it.id} item={it} onClickTag={onClickTag}/>)}
+        {items.map((it) => <CardItem key={it.id} item={it} onClickTag={onClickTag}/>)}
       </section>
-
-      <div style={{ height: virtualGrid.padBottom }} />
 
       {loadingRef.current && <div className={styles.status}>Loading…</div>}
       {error &&

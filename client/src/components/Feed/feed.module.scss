@@ -1,5 +1,5 @@
 .feedWrap {
-  width: 1152px;
+  max-width: 1152px;
   margin: 24px auto;
   padding: 0 16px;
   font-family: var(--font-family);
@@ -33,6 +33,7 @@ h1 {
 
 .grid {
   display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 12px;
   justify-content: center;
   contain: layout;
