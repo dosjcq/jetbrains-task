@@ -1,0 +1,59 @@
+.feedWrap {
+  width: 1152px;
+  margin: 24px auto;
+  padding: 0 16px;
+  font-family: var(--font-family);
+}
+
+h1 {
+  margin: 0 0 12px;
+  font-size: 20px;
+}
+
+.toolbar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin: 8px 0 16px;
+  flex-wrap: wrap;
+}
+
+.tagsRow {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.clear {
+  margin-left: auto;
+  padding: 6px 10px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.grid {
+  display: grid;
+  gap: 12px;
+  justify-content: center;
+  contain: layout;
+}
+
+.status {
+  text-align: center;
+  padding: 12px;
+}
+
+.status.dim {
+  color: #6b7280;
+}
+
+.status.error {
+  color: #b91c1c;
+}
+
+.tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+}

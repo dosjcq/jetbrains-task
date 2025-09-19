@@ -1,0 +1,45 @@
+.card {
+  height: 150px;
+  max-width: 160px;
+  border-radius: 12px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background: white;
+}
+
+.card img {
+  image-rendering: auto;
+}
+
+.card img {
+  display: block;
+}
+
+.meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.name {
+  font-size: 12px;
+  color: #111827;
+  text-transform: capitalize;
+}
+
+.chip {
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+  padding: 2px 6px;
+  font-size: 11px;
+  color: #374151;
+  cursor: pointer;
+
+  &:hover {
+    background: #e2e8f0;
+  }
+}
