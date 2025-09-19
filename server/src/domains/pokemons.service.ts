@@ -1,24 +1,5 @@
-import { GEN_RANGES } from './constants';
-import { Page, PokemonItem } from './types';
-
-function generationTagFor(id: number): string {
-  const g = GEN_RANGES.find((r) => id >= r.start && id <= r.end);
-  return g ? g.tag : 'gen-unknown';
-}
-
-function rangeForTag(tag: string) {
-  return GEN_RANGES.find((r) => r.tag === tag) ?? null;
-}
-
-type PokeListJSON = {
-  count: number;
-  results: { name: string; url: string }[];
-};
-
-function idFromUrl(u: string) {
-  const m = u.match(/\/pokemon\/(\d+)\/*$/);
-  return m ? Number(m[1]) : null;
-}
+import { Page, PokeListJSON, PokemonItem } from './types';
+import { generationTagFor, idFromUrl, rangeForTag } from './utils';
 
 /**
  * Главная функция: одна страница списка.
@@ -39,11 +20,11 @@ export async function generatePokemons(
     const totalInRange = range.end - range.start + 1;
     const globalOffset = range.start - 1 + (page - 1) * pageSize;
 
-    const r = await fetch(
+    const response = await fetch(
       `https://pokeapi.co/api/v2/pokemon?limit=${pageSize}&offset=${globalOffset}`,
     );
-    if (!r.ok) throw new Error(`HTTP ${r.status}`);
-    const list = (await r.json()) as PokeListJSON;
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const list = (await response.json()) as PokeListJSON;
 
     const items = list.results
       .map((it) => {
@@ -69,11 +50,11 @@ export async function generatePokemons(
   }
 
   const offset = (page - 1) * pageSize;
-  const r = await fetch(
+  const response = await fetch(
     `https://pokeapi.co/api/v2/pokemon?limit=${pageSize}&offset=${offset}`,
   );
-  if (!r.ok) throw new Error(`HTTP ${r.status}`);
-  const list = (await r.json()) as PokeListJSON;
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  const list = (await response.json()) as PokeListJSON;
 
   const items: PokemonItem[] = list.results.map((it) => {
     const id = idFromUrl(it.url)!;
