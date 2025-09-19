@@ -12,3 +12,8 @@ export type Page<T> = {
   total: number;
   hasNext: boolean;
 };
+
+export type PokeListJSON = {
+  count: number;
+  results: { name: string; url: string }[];
+};

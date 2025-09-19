@@ -5,6 +5,11 @@ import swaggerUI from '@fastify/swagger-ui';
 import { ENV } from './env';
 import { imagesRoutes } from './domains/pokemons.routes';
 
+const RESPONSE_CODES_ENUM = {
+  ERR_500: 500,
+  ERR_404: 404,
+};
+
 const app = Fastify({
   logger:
     ENV.NODE_ENV === 'development'
@@ -25,15 +30,13 @@ await app.register(swaggerUI, { routePrefix: '/docs', uiConfig: { docExpansion: 
 
 await app.register(imagesRoutes, { prefix: '/api' });
 
-app.get('/health', async () => ({ ok: true, env: ENV.NODE_ENV }));
-
 app.setNotFoundHandler((req, reply) => {
-  reply.code(404).send({ message: 'Not Found', path: req.url });
+  reply.code(RESPONSE_CODES_ENUM.ERR_404).send({ message: 'Not Found', path: req.url });
 });
 
 app.setErrorHandler((err, req, reply) => {
   req.log.error({ err }, 'Unhandled error');
-  const code = (err as { statusCode?: number }).statusCode ?? 500;
+  const code = (err as { statusCode?: number }).statusCode ?? RESPONSE_CODES_ENUM.ERR_500;
   reply.code(code).send({ message: err.message ?? 'Internal Server Error' });
 });
 
