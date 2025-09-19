@@ -42,4 +42,10 @@
   &:hover {
     background: var(--hover-background);
   }
+
+  &:disabled {
+    background: var(--border-color);
+    cursor: auto;
+    pointer-events: none;
+  }
 }

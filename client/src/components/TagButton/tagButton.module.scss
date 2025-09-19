@@ -9,6 +9,7 @@
 }
 
 .tag.active {
-  border-color: var(--dark-blue);
+  background-color: var(--dark-blue);
+  color: white;
   font-weight: 600;
 }

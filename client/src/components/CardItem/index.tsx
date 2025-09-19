@@ -1,4 +1,4 @@
-import type { GenTag, PokemonItem } from '@/lib/types';
+import { GEN_TAGS, type GenTag, type PokemonItem } from '@/lib/types';
 
 import styles from './cardItem.module.scss';
 
@@ -19,7 +19,15 @@ export function CardItem(
         <span className={styles.name}>{name}</span>
         <div className={styles.tags}>
           {tags.map((tag) =>
-            <span className={styles.chip} key={tag} onClick={() => onClickTag(tag)}>{tag}</span>,
+            <button
+              className={styles.chip}
+              key={tag}
+              onClick={() => onClickTag(tag)}
+              disabled={!GEN_TAGS.includes(tag)}
+
+            >
+              {tag}
+            </button>,
           )}
         </div>
       </figcaption>

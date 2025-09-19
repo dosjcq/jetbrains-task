@@ -1,49 +1,86 @@
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
-type Options = { rootMargin?: string; enabled?: boolean; cooldownMs?: number };
+type InfiniteScrollOptions = {
+  rootMargin?: string;
+  enabled?: boolean;
+  cooldownMs?: number;
+  threshold?: number;
+};
 
 /**
  * useInfiniteScroll
  *
- * A simple React hook for infinite scrolling.
- * Returns a ref (infiniteScrollRef) that you attach to a bottom element.
- * When this element enters the viewport, the callback is triggered to load more items.
+ * IntersectionObserver-based infinite scroll hook with:
+ * - callback ref (attaches as soon as the DOM node mounts);
+ * - single-shot triggering (unobserve → load → reobserve);
+ * - internal loading guard and cooldown;
+ * - clean re-arming on option changes.
  *
- * @param callback - Function to call when more content should load
- * @param options - { rootMargin, enabled, cooldownMs }
- * @returns infiniteScrollRef - attach this to a div at the end of your list
-
+ * @param callback  Async loader invoked when the infiniteScroll element intersects the viewport.
+ * @param options   Behavior settings (rootMargin, enabled, cooldownMs, threshold).
+ * @returns         A callback ref to assign to the infiniteScroll element
  */
 export function useInfiniteScroll(
   callback: () => Promise<void> | void,
-  { rootMargin = '400px', enabled = true, cooldownMs = 150 }: Options = {},
+  {
+    rootMargin = '400px',
+    enabled = true,
+    cooldownMs = 150,
+    threshold = 0,
+  }: InfiniteScrollOptions = {},
 ) {
-  const infiniteScrollRef = useRef<HTMLDivElement | null>(null);
+  const targetRef = useRef<HTMLDivElement | null>(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
   const isLoadingRef = useRef(false);
 
-  useEffect(() => {
-    const el = infiniteScrollRef.current;
-    if (!enabled || !el) return;
+  const disconnectObserver = useCallback(() => {
+    observerRef.current?.disconnect();
+    observerRef.current = null;
+  }, []);
 
-    const intersectionObserver = new IntersectionObserver((entries) => {
-      if (!enabled || isLoadingRef.current) return;
-      if (entries.some((e) => e.isIntersecting)) {
+  const setupObserver = useCallback(() => {
+    const el = targetRef.current;
+    if (!el || !enabled) return;
+
+    disconnectObserver();
+
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        if (isLoadingRef.current || !enabled) return;
+        if (!entries.some((e) => e.isIntersecting)) return;
+
         isLoadingRef.current = true;
+        observerRef.current?.unobserve(el);
+
         Promise.resolve(callback())
-          .catch(() => {
-            console.error('Error loading more items');
+          .catch((err) => {
+            console.error('useInfiniteScroll load error:', err);
           })
           .finally(() => {
-            setTimeout(() => { isLoadingRef.current = false; }, cooldownMs);
+            setTimeout(() => {
+              isLoadingRef.current = false;
+              if (enabled && targetRef.current) {
+                observerRef.current?.observe(targetRef.current);
+              }
+            }, cooldownMs);
           });
-      }
-    }, { rootMargin });
+      },
+      { root: null, rootMargin, threshold },
+    );
 
-    intersectionObserver.observe(el);
-    return () => {
-      intersectionObserver.disconnect();
-    };
-  }, [callback, enabled, rootMargin, cooldownMs]);
+    observerRef.current.observe(el);
+  }, [callback, enabled, rootMargin, threshold, cooldownMs, disconnectObserver]);
+
+  const infiniteScrollRef = useCallback((node: HTMLDivElement | null) => {
+    targetRef.current = node;
+    if (node) setupObserver();
+    else disconnectObserver();
+  }, [setupObserver, disconnectObserver]);
+
+  useEffect(() => {
+    if (targetRef.current) setupObserver();
+    return disconnectObserver;
+  }, [setupObserver, disconnectObserver]);
 
   return infiniteScrollRef;
 }
