@@ -2,14 +2,14 @@ import { Page, PokeListJSON, PokemonItem } from './types';
 import { generationTagFor, idFromUrl, rangeForTag } from './utils';
 
 /**
- * Главная функция: одна страница списка.
- * Если searchGen задан, пагинируем внутри диапазона этого поколения,
- * иначе — глобально по всему списку.
+ * Main function: one page of the list.
+ * If searchGen is specified, paginate within the range of that generation,
+ * otherwise — globally across the entire list.
  */
 export async function generatePokemons(
   page: number,
   pageSize: number,
-  searchGen?: string, // например "gen-iii"
+  searchGen?: string,
 ): Promise<Page<PokemonItem>> {
   if (searchGen) {
     const range = rangeForTag(searchGen);

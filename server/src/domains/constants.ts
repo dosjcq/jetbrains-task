@@ -2,6 +2,7 @@ export const GEN_ENUM = [
   'gen-i','gen-ii','gen-iii','gen-iv','gen-v','gen-vi','gen-vii','gen-viii','gen-ix',
 ] as const;
 
+// this information from official source and documentation
 export const GEN_RANGES = [
   { tag: 'gen-i', start: 1, end: 151 },
   { tag: 'gen-ii', start: 152, end: 251 },
@@ -11,5 +12,5 @@ export const GEN_RANGES = [
   { tag: 'gen-vi', start: 650, end: 721 },
   { tag: 'gen-vii', start: 722, end: 809 },
   { tag: 'gen-viii', start: 810, end: 905 },
-  { tag: 'gen-ix', start: 906, end: 1025 }, // актуально на сейчас; легко расширить
+  { tag: 'gen-ix', start: 906, end: 1025 },
 ] as const;

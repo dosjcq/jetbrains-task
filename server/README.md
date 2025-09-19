@@ -29,7 +29,7 @@ cp env.example .env
 
 Edit `.env` if necessary (port, CORS origin, etc.).
 
-## 🔧 Available Scripts
+## Available Scripts
 ```bash
 # Start in watch mode (development)
 npm run dev
