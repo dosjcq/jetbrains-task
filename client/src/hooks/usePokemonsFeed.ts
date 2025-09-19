@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { PAGE_SIZE } from '../constants/feedConstants';
 import type { ErrorResponse, GenTag, PokemonItem } from '../lib/types';
@@ -45,6 +45,16 @@ export function usePokemonsFeed(search?: GenTag) {
       loadingRef.current = false;
     }
   }, [isHasMore, search, trigger]);
+
+  useEffect(() => {
+    reset();
+
+    const run = async () => {
+      await loadNext();
+    };
+    run();
+
+  }, [search, reset, loadNext]);
 
   return { items, isHasMore, error, loadNext, reset, loadingRef, currentPage };
 }

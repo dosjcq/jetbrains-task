@@ -42,14 +42,14 @@ h1 {
 .status {
   text-align: center;
   padding: 12px;
-}
+  
+  &_dim {
+    color: #6b7280;
+  }
 
-.status.dim {
-  color: #6b7280;
-}
-
-.status.error {
-  color: #b91c1c;
+  &_error {
+    color: #b91c1c;
+  }
 }
 
 .tags {
